@@ -9,6 +9,14 @@ const images = [
   'assets/images/vol\'jin.webp'
 ];
 
+let firstCard = null;
+let secondCard = null;
+let moves = 0;
+let pairs = 0;
+let lock = false;
+let timer = null;
+
+/* --- App --- */
 const app = createElem('div', ['app']);
 
 /* --- Header --- */
@@ -56,12 +64,6 @@ stats.append(movesItem, pairsItem);
 /* --- Board --- */
 const board = createElem('div', ['board']);
 
-const cardsImages = [...images, ...images];
-
-cardsImages.forEach(path => {
-  board.append(createCard(path));
-})
-
 app.append(header, stats, board);
 document.body.append(app);
 
@@ -73,7 +75,9 @@ function createElem(tag, classes=[]) {
 
 function createCard(path) {
   const card = createElem('button', ['card']);
+  card.type = 'button';
   card.dataset.img = path;
+  card.onclick = flipCard;
 
   const cardInner = createElem('span', ['card__inner']);
   card.append(cardInner);
@@ -88,3 +92,81 @@ function createCard(path) {
 
   return card;
 }
+
+function shuffle(arr) {
+  for (let i = (arr.length - 1); i > 0; i--) {
+    let randomIndex = Math.floor(Math.random() * (i + 1));
+    
+    [arr[i], arr[randomIndex]] = [arr[randomIndex], arr[i]];
+  }
+
+  return arr;
+}
+
+function flipCard() {
+  if (lock) return;
+  if (this.classList.contains('is-flipped') || this.classList.contains('is-matched')) return;
+
+  this.classList.add('is-flipped');
+
+  if (firstCard === null) {
+    firstCard = this;
+  } else {
+    secondCard = this;
+    moves++;
+
+    if (firstCard.dataset.img === secondCard.dataset.img) {
+      firstCard.classList.add('is-matched');
+      secondCard.classList.add('is-matched');
+      pairs++;
+      firstCard = null;
+      secondCard = null;
+
+      updateStats(moves, pairs)
+    } else {
+      lock = true;
+
+      updateStats(moves, pairs);
+
+      timer = setTimeout(() => {
+        lock = false;
+        firstCard.classList.remove('is-flipped');
+        secondCard.classList.remove('is-flipped');
+        firstCard = null;
+        secondCard = null;
+        timer = null;
+      }, 1000);
+    }
+  }
+}
+
+function updateStats() {
+  movesValue.textContent = `${moves}`;
+  pairsValue.textContent = `${pairs} / 8`;
+}
+
+function startGame() {
+  if (timer !== null) {
+    clearTimeout(timer);
+    timer = null;
+  }
+
+  moves = 0;
+  pairs = 0;
+  firstCard = null;
+  secondCard = null;
+  lock = false;
+
+  updateStats();
+
+  board.replaceChildren();
+
+  const cardsImages = shuffle([...images, ...images]);
+
+  cardsImages.forEach(path => {
+    board.append(createCard(path));
+  });
+}
+
+startGame();
+newGameBtn.onclick = startGame;
