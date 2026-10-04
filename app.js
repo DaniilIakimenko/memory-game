@@ -15,6 +15,7 @@ let moves = 0;
 let pairs = 0;
 let lock = false;
 let timer = null;
+let bestScores = [];
 
 /* --- App --- */
 const app = createElem('div', ['app']);
@@ -35,6 +36,10 @@ newGameBtn.onclick = startGame;
 const leaderboardBtn = createElem('button', ['btn', 'btn--ghost']);
 leaderboardBtn.type = 'button';
 leaderboardBtn.textContent = 'Leaderboard';
+leaderboardBtn.onclick = () => {
+  renderLeaderboard();
+  leaderboardModal.modal.showModal();
+}
 
 headerActions.append(newGameBtn, leaderboardBtn);
 header.append(headerTitle, headerActions);
@@ -67,17 +72,18 @@ const board = createElem('div', ['board']);
 
 /* --- Win Modal --- */
 const winModal = createModal();
-winModal.modalTitle.textContent = 'Congratulations!'
+winModal.modalTitle.textContent = 'Congratulations!';
 
 const modalNewGameBtn = createButton('New Game', startGame);
 modalNewGameBtn.classList.add('btn--primary');
 
 winModal.modalActions.append(modalNewGameBtn);
 
+/* --- Leaderboard --- */
+const leaderboardModal = createModal();
+leaderboardModal.modalTitle.textContent = 'Leaderboard';
 
-const leaderBoardModal = createModal();
-
-app.append(header, stats, board, winModal.modal, leaderBoardModal.modal);
+app.append(header, stats, board, winModal.modal, leaderboardModal.modal);
 document.body.append(app);
 
 function createElem(tag, classes=[]) {
@@ -171,8 +177,16 @@ function flipCard() {
       updateStats(moves, pairs);
 
       if (pairs === 8) {
-        winModal.modal.showModal();
+        let currentGame = { 'moves': moves, 'date': formatDate(new Date()), 'ms':  new Date().getTime() };
+
+        bestScores = JSON.parse(localStorage.getItem('leaderboard')) || [];
+        bestScores.push(currentGame);
+        bestScores.sort((a, b) => a.moves - b.moves || a.ms - b.ms)
+                  .slice(0, 10);
+        localStorage.setItem('leaderboard', JSON.stringify(bestScores));
+
         winModal.modalBody.textContent = `Moves: ${moves}`;
+        winModal.modal.showModal();
       }
 
     } else {
@@ -195,6 +209,62 @@ function flipCard() {
 function updateStats() {
   movesValue.textContent = `${moves}`;
   pairsValue.textContent = `${pairs} / 8`;
+}
+
+function renderLeaderboard() {
+  leaderboardModal.modalBody.replaceChildren();
+  
+  bestScores = JSON.parse(localStorage.getItem('leaderboard')) || [];
+
+  if (bestScores.length === 0) {
+    const modalEmpty = createElem('div', ['modal__empty']);
+    modalEmpty.textContent = 'No game results found';
+
+    leaderboardModal.modalBody.append(modalEmpty);
+
+  } else {
+    leaderboardModal.modalBody.replaceChildren();
+
+    const leaderboardTable = createElem('table', ['leaderboard']);
+    const leaderboardTableHead = document.createElement('thead');
+    
+    for (let i = 0; i <= 2; i++) {
+      const leaderboardTableH = document.createElement('th');
+      if (i === 0) leaderboardTableH.textContent = '#';
+      if (i === 1) leaderboardTableH.textContent = 'Moves';
+      if (i === 2) leaderboardTableH.textContent = 'Date';
+
+      leaderboardTableHead.append(leaderboardTableH);
+    }
+
+    const leaderboardTableBody = document.createElement('tbody');
+
+    for (let i = 0; i <= bestScores.length - 1; i++) {
+      const leaderboardTableR = document.createElement('tr');
+      
+      for (let j = 0; j <= 2; j++) {
+        const leaderboardTableD = document.createElement('td');
+        if (j === 0) leaderboardTableD.textContent = i + 1;
+        if (j === 1) leaderboardTableD.textContent = bestScores[i].moves;
+        if (j === 2) leaderboardTableD.textContent = bestScores[i].date;
+
+        leaderboardTableR.append(leaderboardTableD);
+      }
+
+      leaderboardTableBody.append(leaderboardTableR);
+    }
+
+    leaderboardTable.append(leaderboardTableHead, leaderboardTableBody);
+    leaderboardModal.modalBody.append(leaderboardTable);
+  }
+}
+
+function formatDate(date) {
+  return [
+    date.getDate().toString().padStart(2, '0'),
+    (date.getMonth() + 1).toString().padStart(2, '0'),
+    date.getFullYear()
+  ].join('.')
 }
 
 function startGame() {

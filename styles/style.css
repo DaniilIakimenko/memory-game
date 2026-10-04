@@ -279,3 +279,42 @@ body {
   color: var(--color-text);
   background: #f3f4f6;
 }
+
+.leaderboard {
+  width: 100%;
+  font-size: 14px;
+}
+
+.leaderboard th,
+.leaderboard td {
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.leaderboard th {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.leaderboard td {
+  border-bottom: 1px solid #f1f3f5;
+}
+
+.leaderboard tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.leaderboard tbody tr:first-child td {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.modal__empty {
+  padding: 24px 8px;
+  font-size: 14px;
+  text-align: center;
+  color: var(--color-muted);
+}
