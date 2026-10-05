@@ -133,6 +133,7 @@ function createModal() {
   const modalCloseBtn = createElem('button', ['modal__close']);
   modalCloseBtn.type = 'button';
   modalCloseBtn.textContent = '×';
+  modalCloseBtn.setAttribute('aria-label', 'Close');
   modalCloseBtn.onclick = () => modal.close();
 
   const modalTitle = createElem('h2', ['modal__title']);
@@ -181,8 +182,9 @@ function flipCard() {
 
         bestScores = JSON.parse(localStorage.getItem('leaderboard')) || [];
         bestScores.push(currentGame);
-        bestScores.sort((a, b) => a.moves - b.moves || a.ms - b.ms)
-                  .slice(0, 10);
+        bestScores.sort((a, b) => a.moves - b.moves || a.ms - b.ms);
+        bestScores = bestScores.slice(0, 10);
+
         localStorage.setItem('leaderboard', JSON.stringify(bestScores));
 
         winModal.modalBody.textContent = `Moves: ${moves}`;

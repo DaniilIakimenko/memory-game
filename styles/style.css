@@ -156,15 +156,6 @@ body {
   perspective: 900px;
 }
 
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow);
-}
-
-.card:active {
-  transform: translateY(0);
-}
-
 .card__inner {
   position: absolute;
   inset: 0;
