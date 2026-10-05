@@ -39,7 +39,7 @@ leaderboardBtn.textContent = 'Leaderboard';
 leaderboardBtn.onclick = () => {
   renderLeaderboard();
   leaderboardModal.modal.showModal();
-}
+};
 
 headerActions.append(newGameBtn, leaderboardBtn);
 header.append(headerTitle, headerActions);
@@ -117,6 +117,7 @@ function createCard(path) {
 
   const cardImg = createElem('img', ['card__img']);
   cardImg.src = path;
+  cardImg.alt = '';
   cardBack.append(cardImg);
 
   return card;
@@ -175,7 +176,7 @@ function flipCard() {
       secondCard = null;
       pairs++;
 
-      updateStats(moves, pairs);
+      updateStats();
 
       if (pairs === 8) {
         let currentGame = { 'moves': moves, 'date': formatDate(new Date()), 'ms':  new Date().getTime() };
@@ -194,7 +195,7 @@ function flipCard() {
     } else {
       lock = true;
 
-      updateStats(moves, pairs);
+      updateStats();
 
       timer = setTimeout(() => {
         lock = false;
@@ -266,7 +267,7 @@ function formatDate(date) {
     date.getDate().toString().padStart(2, '0'),
     (date.getMonth() + 1).toString().padStart(2, '0'),
     date.getFullYear()
-  ].join('.')
+  ].join('.');
 }
 
 function startGame() {
