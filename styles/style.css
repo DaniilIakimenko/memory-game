@@ -1,17 +1,18 @@
 :root {
-  --color-bg: #f5f7fb;
-  --color-surface: #ffffff;
-  --color-text: #0d0d0d;
-  --color-muted: #6b7280;
-  --color-border: #e5e7eb;
+  --color-bg: #1e1710;
+  --color-surface: #2b2118;
+  --color-text: #ebd9ac;
+  --color-muted: #96845f;
+  --color-border: #4d3f2c;
 
-  --color-accent: #4d6bfe;
-  --color-accent-hover: #3a56e8;
-  --color-back: #25324a;
+  --color-accent: #c8a548;
+  --color-accent-hover: #dfbc60;
+  --color-back: #3d2a1a;
+  --color-gold: #c8a548;
 
   --border-radius: 12px;
 
-  --shadow: 0 1px 3px rgba(15, 23, 42, .08);
+  --shadow: 0 2px 6px rgba(0, 0, 0, .45);
 
   --transition: .2s ease;
 }
@@ -49,6 +50,7 @@ body {
   margin: 0;
   font-size: 24px;
   font-weight: 700;
+  color: var(--color-gold);
 }
 
 .header__actions {
@@ -83,8 +85,10 @@ body {
 }
 
 .btn--primary {
-  color: #ffffff;
+  color: #2a1f12;
   background: var(--color-accent);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .15) inset,
+              0 2px 6px rgba(0, 0, 0, .35);
 }
 
 .btn--primary:hover {
@@ -98,8 +102,9 @@ body {
 }
 
 .btn--ghost:hover {
-  border-color: #d1d5db;
-  background: #f9fafb;
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: #33281c;
 }
 
 .stats {
@@ -128,6 +133,7 @@ body {
 
 .stats__value {
   font-weight: 700;
+  color: var(--color-gold);
 }
 
 .board {
@@ -154,6 +160,20 @@ body {
               box-shadow var(--transition),
               opacity var(--transition);
   perspective: 900px;
+}
+
+.card:hover:not(.is-flipped):not(.is-matched) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, .5);
+}
+
+.card:active:not(.is-matched) {
+  transform: translateY(0);
+}
+
+.card.is-flipped,
+.card.is-matched {
+  cursor: default;
 }
 
 .card__inner {
@@ -185,12 +205,17 @@ body {
 }
 
 .card__face--front {
-  background: var(--color-back);
+  background:
+    radial-gradient(circle at 50% 40%, rgba(200, 165, 72, .18), transparent 65%),
+    var(--color-back);
+  box-shadow: inset 0 0 0 2px rgba(200, 165, 72, .35),
+              inset 0 0 0 4px rgba(0, 0, 0, .35);
 }
 
 .card__face--back {
   background: var(--color-surface);
   transform: rotateY(180deg);
+  box-shadow: inset 0 0 0 2px rgba(200, 165, 72, .35);
 }
 
 .card__img {
@@ -199,6 +224,12 @@ body {
   object-fit: cover;
   user-select: none;
   pointer-events: none;
+  filter: sepia(0.45) saturate(1.1) brightness(0.82) contrast(1.08);
+}
+
+.card.is-matched {
+  box-shadow: 0 0 0 2px var(--color-gold),
+              0 0 14px rgba(200, 165, 72, .45);
 }
 
 /* --- Modal --- */
@@ -213,8 +244,12 @@ body {
   border-radius: var(--border-radius);
   color: var(--color-text);
   background: var(--color-surface);
-  box-shadow: var(--shadow);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .7);
   overflow: hidden;
+}
+
+.modal::backdrop {
+  background: rgba(8, 5, 2, .72);
 }
 
 .modal__inner {
@@ -229,6 +264,7 @@ body {
   font-size: 20px;
   font-weight: 700;
   text-align: center;
+  color: var(--color-gold);
 }
 
 .modal__body {
@@ -263,12 +299,11 @@ body {
   color: var(--color-muted);
   background: transparent;
   transition: background-color var(--transition), color var(--transition);
-  cursor: pointer;
 }
 
 .modal__close:hover {
-  color: var(--color-text);
-  background: #f3f4f6;
+  color: var(--color-gold);
+  background: rgba(200, 165, 72, .12);
 }
 
 .leaderboard {
@@ -291,7 +326,7 @@ body {
 }
 
 .leaderboard td {
-  border-bottom: 1px solid #f1f3f5;
+  border-bottom: 1px solid #3d3021;
 }
 
 .leaderboard tbody tr:last-child td {
@@ -300,7 +335,7 @@ body {
 
 .leaderboard tbody tr:first-child td {
   font-weight: 600;
-  color: var(--color-text);
+  color: var(--color-gold);
 }
 
 .modal__empty {
